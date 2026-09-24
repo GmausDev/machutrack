@@ -1,6 +1,6 @@
 # machutrack
 
-Registra cada 30 minutos la disponibilidad de entradas de **venta presencial** para
+Registra cada 15 minutos durante el horario de venta (y cada 2 horas el resto del día) la disponibilidad de entradas de **venta presencial** para
 Machu Picchu que publica el Ministerio de Cultura en
 <https://tuboleto.cultura.pe/disponibilidad/llaqta_machupicchu>, para ver si vale la
 pena ir sin entrada y comprarla en el Centro Cultural (Machu Picchu Pueblo).
@@ -20,7 +20,7 @@ Esa página muestra, para el **día siguiente**:
 - `site/index.html` es el dashboard: lee `data/snapshots.csv` y muestra, para cada día
   de visita, lo que queda por ruta, la evolución a lo largo del día, los turnos de la cola
   y a qué hora suele agotarse cada ruta.
-- `.github/workflows/track.yml` ejecuta todo cada 30 minutos en GitHub Actions, hace
+- `.github/workflows/track.yml` ejecuta todo en GitHub Actions (cada 15 min de 05:00 a 17:00 de Lima, cada 2 h el resto), hace
   commit de los datos y publica el dashboard en GitHub Pages.
 
 Para activarlo:
