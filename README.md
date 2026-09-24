@@ -23,12 +23,6 @@ Esa página muestra, para el **día siguiente**:
 - `.github/workflows/track.yml` ejecuta todo en GitHub Actions (cada 15 min de 05:00 a 17:00 de Lima, cada 2 h el resto), hace
   commit de los datos y publica el dashboard en GitHub Pages.
 
-Para activarlo:
-1. El workflow tiene que estar en la rama por defecto (`main`), porque los cron de GitHub
-   solo se ejecutan ahí.
-2. En **Settings → Pages → Build and deployment → Source**, elige **GitHub Actions**.
-3. Lánzalo una vez a mano desde **Actions → track → Run workflow**. El dashboard queda
-   en `https://<usuario>.github.io/machutrack/`.
 
 ## Uso local
 
