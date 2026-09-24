@@ -17,12 +17,18 @@ Esa página muestra, para el **día siguiente**:
   `data/snapshots.csv`.
 - `tracker/report.py` genera `REPORT.md`: la hora a la que se agota cada ruta, cada día
   y la mediana entre días.
-- `.github/workflows/track.yml` ejecuta ambos cada 30 minutos en GitHub Actions y
-  hace commit de los datos.
+- `site/index.html` es el dashboard: lee `data/snapshots.csv` y muestra, para cada día
+  de visita, lo que queda por ruta, la evolución a lo largo del día, los turnos de la cola
+  y a qué hora suele agotarse cada ruta.
+- `.github/workflows/track.yml` ejecuta todo cada 30 minutos en GitHub Actions, hace
+  commit de los datos y publica el dashboard en GitHub Pages.
 
-Para activarlo, el workflow tiene que estar en la rama por defecto (`main`); los cron
-de GitHub solo se ejecutan ahí. También se puede lanzar a mano desde la pestaña
-Actions (**Run workflow**).
+Para activarlo:
+1. El workflow tiene que estar en la rama por defecto (`main`), porque los cron de GitHub
+   solo se ejecutan ahí.
+2. En **Settings → Pages → Build and deployment → Source**, elige **GitHub Actions**.
+3. Lánzalo una vez a mano desde **Actions → track → Run workflow**. El dashboard queda
+   en `https://<usuario>.github.io/machutrack/`.
 
 ## Uso local
 
@@ -32,6 +38,10 @@ python -m playwright install chromium
 python -m tracker.scrape   # una captura
 python -m tracker.report   # regenera REPORT.md
 python -m pytest -q
+
+# ver el dashboard con tus datos
+mkdir -p _site/data && cp site/index.html _site/ && cp data/snapshots.csv _site/data/
+python -m http.server -d _site 8000   # http://localhost:8000
 ```
 
 ## Cómo leer los datos

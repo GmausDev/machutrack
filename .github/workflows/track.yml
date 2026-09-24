@@ -5,9 +5,14 @@ on:
     # Every 30 min. GitHub may delay scheduled runs by a few minutes.
     - cron: "*/30 * * * *"
   workflow_dispatch:
+  push:
+    branches: [main]
+    paths: [site/**, .github/workflows/track.yml]
 
 permissions:
   contents: write
+  pages: write
+  id-token: write
 
 concurrency:
   group: track
@@ -25,14 +30,36 @@ jobs:
           cache: pip
       - run: pip install -r requirements.txt
       - run: python -m playwright install --with-deps chromium
-      - run: python -m tracker.scrape
+      - name: Snapshot
+        # A failed scrape still publishes the dashboard with the data we already have.
+        continue-on-error: true
+        run: python -m tracker.scrape
       - run: python -m tracker.report
       - name: Commit data
         run: |
           git config user.name "machutrack-bot"
           git config user.email "machutrack-bot@users.noreply.github.com"
-          git add data/snapshots.csv REPORT.md
+          git add REPORT.md
+          if [ -f data/snapshots.csv ]; then git add data/snapshots.csv; fi
           git diff --cached --quiet && exit 0
           git commit -m "snapshot $(date -u +%Y-%m-%dT%H:%MZ)"
           for i in 1 2 3; do git pull --rebase && git push && exit 0; sleep 5; done
           exit 1
+      - name: Build site
+        run: |
+          mkdir -p _site/data
+          cp site/index.html _site/
+          if [ -f data/snapshots.csv ]; then cp data/snapshots.csv _site/data/; fi
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: _site
+
+  deploy:
+    needs: snapshot
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4

@@ -1,0 +1,442 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Machutrack</title>
+<meta name="description" content="Disponibilidad de entradas de venta presencial para Machu Picchu, capturada cada 30 minutos.">
+<style>
+:root {
+  color-scheme: light;
+  --page: #f9f9f7;
+  --surface-1: #fcfcfb;
+  --text-primary: #0b0b0b;
+  --text-secondary: #52514e;
+  --text-muted: #898781;
+  --grid: #e1e0d9;
+  --axis: #c3c2b7;
+  --border: rgba(11,11,11,0.10);
+  --good: #006300;
+  --critical: #d03b3b;
+  --s1: #2a78d6; --s2: #eb6834; --s3: #1baf7a; --s4: #eda100;
+  --s5: #e87ba4; --s6: #008300; --s7: #4a3aa7; --s8: #e34948;
+  --other: #898781;
+}
+@media (prefers-color-scheme: dark) {
+  :root:where(:not([data-theme="light"])) {
+    color-scheme: dark;
+    --page: #0d0d0d;
+    --surface-1: #1a1a19;
+    --text-primary: #ffffff;
+    --text-secondary: #c3c2b7;
+    --grid: #2c2c2a;
+    --axis: #383835;
+    --border: rgba(255,255,255,0.10);
+    --good: #0ca30c;
+    --critical: #e66767;
+    --s1: #3987e5; --s2: #d95926; --s3: #199e70; --s4: #c98500;
+    --s5: #d55181; --s6: #008300; --s7: #9085e9; --s8: #e66767;
+  }
+}
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --page: #0d0d0d;
+  --surface-1: #1a1a19;
+  --text-primary: #ffffff;
+  --text-secondary: #c3c2b7;
+  --grid: #2c2c2a;
+  --axis: #383835;
+  --border: rgba(255,255,255,0.10);
+  --good: #0ca30c;
+  --critical: #e66767;
+  --s1: #3987e5; --s2: #d95926; --s3: #199e70; --s4: #c98500;
+  --s5: #d55181; --s6: #008300; --s7: #9085e9; --s8: #e66767;
+}
+* { box-sizing: border-box; }
+body {
+  margin: 0; background: var(--page); color: var(--text-primary);
+  font: 15px/1.45 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+}
+main { max-width: 1100px; margin: 0 auto; padding: 24px 16px 48px; }
+h1 { font-size: 24px; margin: 0 0 4px; }
+h2 { font-size: 17px; margin: 0 0 4px; }
+.sub { color: var(--text-secondary); margin: 0; }
+.muted { color: var(--text-muted); font-size: 13px; }
+a { color: inherit; }
+.filters { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; margin: 20px 0; }
+.filters label { color: var(--text-secondary); font-size: 14px; }
+select {
+  font: inherit; color: var(--text-primary); background: var(--surface-1);
+  border: 1px solid var(--border); border-radius: 8px; padding: 6px 10px;
+}
+.card {
+  background: var(--surface-1); border: 1px solid var(--border); border-radius: 12px;
+  padding: 16px; margin-bottom: 16px;
+}
+.tiles { display: grid; grid-template-columns: repeat(auto-fill, minmax(165px, 1fr)); gap: 12px; margin-bottom: 16px; }
+.tile { background: var(--surface-1); border: 1px solid var(--border); border-radius: 12px; padding: 12px 14px; }
+.tile .name { display: flex; gap: 6px; align-items: center; font-size: 13px; color: var(--text-secondary); }
+.tile .key { width: 10px; height: 10px; border-radius: 2px; flex: none; }
+.tile .big { font-size: 28px; font-weight: 650; font-variant-numeric: tabular-nums; margin-top: 4px; }
+.tile .of { font-size: 14px; font-weight: 400; color: var(--text-secondary); }
+.tile .state { font-size: 13px; margin-top: 2px; }
+.state.out { color: var(--critical); }
+.state.ok { color: var(--good); }
+.legend { display: flex; flex-wrap: wrap; gap: 6px 16px; margin: 8px 0 4px; font-size: 13px; color: var(--text-secondary); }
+.legend span { display: inline-flex; align-items: center; gap: 6px; }
+.legend i { width: 14px; height: 2px; border-radius: 1px; display: inline-block; }
+.chart { position: relative; }
+.chart svg { display: block; width: 100%; height: auto; overflow: visible; }
+.chart text { fill: var(--text-muted); font-size: 11px; }
+.tip {
+  position: absolute; pointer-events: none; background: var(--surface-1); border: 1px solid var(--border);
+  border-radius: 8px; padding: 8px 10px; font-size: 13px; box-shadow: 0 4px 16px rgba(0,0,0,.12);
+  min-width: 170px; display: none; z-index: 2;
+}
+.tip .t { color: var(--text-secondary); margin-bottom: 4px; }
+.tip .row { display: flex; align-items: center; gap: 8px; }
+.tip .row i { width: 12px; height: 2px; flex: none; }
+.tip .row b { font-variant-numeric: tabular-nums; white-space: nowrap; }
+.tip .row span { color: var(--text-secondary); }
+table { width: 100%; border-collapse: collapse; font-size: 14px; }
+th, td { text-align: left; padding: 7px 8px; border-bottom: 1px solid var(--grid); }
+th { color: var(--text-secondary); font-weight: 500; }
+td.n, th.n { text-align: right; font-variant-numeric: tabular-nums; }
+.scroll { overflow-x: auto; }
+.empty { padding: 32px; text-align: center; color: var(--text-secondary); }
+details summary { cursor: pointer; color: var(--text-secondary); }
+</style>
+</head>
+<body>
+<main>
+  <h1>Machu Picchu: venta presencial</h1>
+  <p class="sub">Entradas que quedan en el Centro Cultural (Machu Picchu Pueblo). Se captura cada 30 min de
+    <a href="https://tuboleto.cultura.pe/disponibilidad/llaqta_machupicchu">tuboleto.cultura.pe</a>. Horas en hora de Lima.</p>
+  <p class="muted" id="updated"></p>
+
+  <div class="filters">
+    <label for="day">Día de visita</label>
+    <select id="day"></select>
+  </div>
+
+  <div id="content">
+    <div class="tiles" id="tiles"></div>
+
+    <section class="card">
+      <h2>Entradas disponibles por ruta (% del aforo)</h2>
+      <p class="muted">Cada línea es una ruta; el eje horizontal es la hora de la captura. Pasa el cursor para ver las cifras.</p>
+      <div class="legend" id="legend"></div>
+      <div class="chart" id="chart-avail"></div>
+    </section>
+
+    <section class="card">
+      <h2>Turnos de la cola entregados</h2>
+      <p class="muted">Turnos repartidos para la venta del día.</p>
+      <div class="chart" id="chart-turnos"></div>
+    </section>
+
+    <section class="card">
+      <h2>¿A qué hora se agota cada ruta?</h2>
+      <p class="muted">Todos los días registrados. «Agotada» = primera captura con 0 disponibles.</p>
+      <div class="scroll"><table id="summary"></table></div>
+    </section>
+
+    <section class="card">
+      <details>
+        <summary>Tabla de capturas del día seleccionado</summary>
+        <div class="scroll"><table id="detail"></table></div>
+      </details>
+    </section>
+  </div>
+</main>
+
+<script>
+const DATA_URL = "data/snapshots.csv";
+// Fixed route -> slot so a route keeps its color on every day.
+const ROUTE_SLOTS = ["1-A", "1-B", "2-A", "2-B", "3-A", "3-B", "1-C", "1-D"];
+const fmtTime = new Intl.DateTimeFormat("es-PE", { timeZone: "America/Lima", hour: "2-digit", minute: "2-digit", hour12: false });
+const fmtDayTime = new Intl.DateTimeFormat("es-PE", { timeZone: "America/Lima", day: "2-digit", month: "2-digit", hour: "2-digit", minute: "2-digit", hour12: false });
+const fmtDate = new Intl.DateTimeFormat("es-PE", { timeZone: "UTC", weekday: "short", day: "2-digit", month: "short", year: "numeric" });
+
+function routeColor(ruta) {
+  const m = ruta.match(/Ruta\s+(\d-[A-Z])/i);
+  const i = m ? ROUTE_SLOTS.indexOf(m[1].toUpperCase()) : -1;
+  return i >= 0 ? `var(--s${i + 1})` : "var(--other)";
+}
+function el(tag, attrs = {}, text) {
+  const e = document.createElement(tag);
+  for (const [k, v] of Object.entries(attrs)) e.setAttribute(k, v);
+  if (text !== undefined) e.textContent = text;
+  return e;
+}
+function svg(tag, attrs = {}) {
+  const e = document.createElementNS("http://www.w3.org/2000/svg", tag);
+  for (const [k, v] of Object.entries(attrs)) e.setAttribute(k, v);
+  return e;
+}
+
+function parseCSV(text) {
+  const rows = []; let row = [], cur = "", q = false;
+  for (let i = 0; i < text.length; i++) {
+    const c = text[i];
+    if (q) {
+      if (c === '"' && text[i + 1] === '"') { cur += '"'; i++; }
+      else if (c === '"') q = false;
+      else cur += c;
+    } else if (c === '"') q = true;
+    else if (c === ",") { row.push(cur); cur = ""; }
+    else if (c === "\n" || c === "\r") {
+      if (c === "\r" && text[i + 1] === "\n") i++;
+      row.push(cur); cur = "";
+      if (row.length > 1 || row[0] !== "") rows.push(row);
+      row = [];
+    } else cur += c;
+  }
+  if (cur !== "" || row.length) { row.push(cur); rows.push(row); }
+  const [head, ...body] = rows;
+  return body.map(r => Object.fromEntries(head.map((h, i) => [h, r[i]])));
+}
+
+function load(rows) {
+  return rows.map(r => ({
+    t: new Date(r.captured_utc),
+    fecha: r.fecha_visita,
+    ruta: r.ruta,
+    aforo: +r.aforo,
+    vendidos: +r.vendidos,
+    disp: +r.disponibles,
+    turnosEnt: r.turnos_entregados === "" ? null : +r.turnos_entregados,
+    turnosDisp: r.turnos_disponibles === "" ? null : +r.turnos_disponibles,
+  })).filter(r => !isNaN(r.t));
+}
+
+function groupBy(arr, key) {
+  const m = new Map();
+  for (const x of arr) { const k = key(x); if (!m.has(k)) m.set(k, []); m.get(k).push(x); }
+  return m;
+}
+function routeSort(a, b) { return a.localeCompare(b, "es", { numeric: true }); }
+
+// ---------- line chart (shared by both charts) ----------
+function lineChart(container, series, { yMax, height = 280, ySuffix = "" }) {
+  container.replaceChildren();
+  const W = Math.max(280, container.clientWidth || 1000), H = height, m = { l: 40, r: 16, t: 10, b: 28 };
+  const all = series.flatMap(s => s.points);
+  if (!all.length) { container.append(el("div", { class: "empty" }, "Sin capturas para este día.")); return; }
+  let x0 = Math.min(...all.map(p => +p.t)), x1 = Math.max(...all.map(p => +p.t));
+  if (x0 === x1) { x0 -= 30 * 60e3; x1 += 30 * 60e3; }
+  const ymax = yMax ?? Math.max(1, ...all.map(p => p.y));
+  const X = t => m.l + (t - x0) / (x1 - x0) * (W - m.l - m.r);
+  const Y = v => H - m.b - v / ymax * (H - m.t - m.b);
+  const root = svg("svg", { viewBox: `0 0 ${W} ${H}`, role: "img" });
+
+  // y grid
+  const step = niceStep(ymax / 4);
+  for (let v = 0; v <= ymax + 1e-9; v += step) {
+    root.append(svg("line", { x1: m.l, x2: W - m.r, y1: Y(v), y2: Y(v), stroke: v === 0 ? "var(--axis)" : "var(--grid)", "stroke-width": 1 }));
+    const t = svg("text", { x: m.l - 6, y: Y(v) + 4, "text-anchor": "end" }); t.textContent = v + ySuffix; root.append(t);
+  }
+  // x ticks: whole hours
+  const span = x1 - x0, maxTicks = Math.max(2, Math.floor((W - m.l - m.r) / 70));
+  const hourStep = [0.5, 1, 2, 3, 6, 12, 24].find(h => span / (h * 3600e3) <= maxTicks) ?? 48;
+  const stepMs = hourStep * 3600e3;
+  for (let t = Math.ceil(x0 / stepMs) * stepMs; t <= x1; t += stepMs) {
+    const tx = svg("text", { x: X(t), y: H - 8, "text-anchor": "middle" });
+    tx.textContent = span > 24 * 3600e3 ? fmtDayTime.format(t) : fmtTime.format(t);
+    root.append(tx);
+  }
+  // lines
+  for (const s of series) {
+    const pts = s.points.slice().sort((a, b) => a.t - b.t);
+    if (pts.length > 1) root.append(svg("path", {
+      d: pts.map((p, i) => `${i ? "L" : "M"}${X(+p.t).toFixed(1)},${Y(p.y).toFixed(1)}`).join(""),
+      fill: "none", stroke: s.color, "stroke-width": 2, "stroke-linejoin": "round", "stroke-linecap": "round",
+      "vector-effect": "non-scaling-stroke",
+    }));
+    else for (const p of pts) root.append(svg("circle", { cx: X(+p.t), cy: Y(p.y), r: 4, fill: s.color, stroke: "var(--surface-1)", "stroke-width": 2 }));
+  }
+  // crosshair + tooltip
+  const times = [...new Set(all.map(p => +p.t))].sort((a, b) => a - b);
+  const hair = svg("line", { y1: m.t, y2: H - m.b, stroke: "var(--text-muted)", "stroke-width": 1, visibility: "hidden" });
+  const dots = svg("g", { visibility: "hidden" });
+  root.append(hair, dots);
+  const hit = svg("rect", { x: m.l, y: 0, width: W - m.l - m.r, height: H, fill: "transparent", tabindex: 0 });
+  root.append(hit);
+  const tip = el("div", { class: "tip" });
+  container.append(root, tip);
+
+  function show(t) {
+    hair.setAttribute("x1", X(t)); hair.setAttribute("x2", X(t)); hair.setAttribute("visibility", "visible");
+    dots.replaceChildren(); dots.setAttribute("visibility", "visible");
+    tip.replaceChildren(el("div", { class: "t" }, fmtDayTime.format(t)));
+    for (const s of series) {
+      const p = s.points.find(p => +p.t === t);
+      if (!p) continue;
+      dots.append(svg("circle", { cx: X(t), cy: Y(p.y), r: 4, fill: s.color, stroke: "var(--surface-1)", "stroke-width": 2 }));
+      const row = el("div", { class: "row" });
+      const key = el("i"); key.style.background = s.color;
+      row.append(key, el("b", {}, p.label ?? String(p.y)), el("span", {}, s.label));
+      tip.append(row);
+    }
+    tip.style.display = "block";
+    const box = container.getBoundingClientRect();
+    const px = X(t) / W * box.width;
+    tip.style.left = Math.min(Math.max(0, px + 12), box.width - tip.offsetWidth) + "px";
+    tip.style.top = "8px";
+  }
+  function hide() { hair.setAttribute("visibility", "hidden"); dots.setAttribute("visibility", "hidden"); tip.style.display = "none"; }
+  function nearest(clientX) {
+    const box = root.getBoundingClientRect();
+    const t = x0 + ((clientX - box.left) / box.width * W - m.l) / (W - m.l - m.r) * (x1 - x0);
+    return times.reduce((a, b) => Math.abs(b - t) < Math.abs(a - t) ? b : a);
+  }
+  let idx = times.length - 1;
+  hit.addEventListener("pointermove", e => { const t = nearest(e.clientX); idx = times.indexOf(t); show(t); });
+  hit.addEventListener("pointerleave", hide);
+  hit.addEventListener("focus", () => show(times[idx]));
+  hit.addEventListener("blur", hide);
+  hit.addEventListener("keydown", e => {
+    if (e.key === "ArrowLeft") idx = Math.max(0, idx - 1);
+    else if (e.key === "ArrowRight") idx = Math.min(times.length - 1, idx + 1);
+    else return;
+    e.preventDefault(); show(times[idx]);
+  });
+}
+function niceStep(raw) {
+  const p = 10 ** Math.floor(Math.log10(raw || 1)), n = raw / p;
+  return (n <= 1 ? 1 : n <= 2 ? 2 : n <= 5 ? 5 : 10) * p;
+}
+
+// ---------- views ----------
+function soldOutAt(snaps) {
+  const s = snaps.slice().sort((a, b) => a.t - b.t).find(x => x.disp === 0);
+  return s ? s.t : null;
+}
+function limaMinutes(t) {
+  const [h, m] = fmtTime.format(t).split(":").map(Number);
+  return h * 60 + m;
+}
+
+function renderDay(rows, fecha) {
+  const day = rows.filter(r => r.fecha === fecha);
+  const byRoute = groupBy(day, r => r.ruta);
+  const routes = [...byRoute.keys()].sort(routeSort);
+
+  // tiles
+  const tiles = document.getElementById("tiles"); tiles.replaceChildren();
+  for (const ruta of routes) {
+    const snaps = byRoute.get(ruta).slice().sort((a, b) => a.t - b.t);
+    const last = snaps[snaps.length - 1];
+    const out = soldOutAt(snaps);
+    const tile = el("div", { class: "tile" });
+    const name = el("div", { class: "name" });
+    const key = el("span", { class: "key" }); key.style.background = routeColor(ruta);
+    name.append(key, el("span", {}, ruta.replace(/^Ruta\s+/, "")));
+    const big = el("div", { class: "big" }, String(last.disp));
+    big.append(el("span", { class: "of" }, ` / ${last.aforo}`));
+    const state = out
+      ? el("div", { class: "state out" }, `✕ Agotada a las ${fmtTime.format(out)}`)
+      : el("div", { class: "state ok" }, `✓ Quedan a las ${fmtTime.format(last.t)}`);
+    tile.append(name, big, state);
+    tiles.append(tile);
+  }
+  const turnos = day.filter(r => r.turnosEnt !== null).sort((a, b) => a.t - b.t);
+  if (turnos.length) {
+    const last = turnos[turnos.length - 1];
+    const tile = el("div", { class: "tile" });
+    tile.append(el("div", { class: "name" }, "Turnos de la cola"));
+    const big = el("div", { class: "big" }, String(last.turnosEnt));
+    big.append(el("span", { class: "of" }, ` / ${last.turnosEnt + (last.turnosDisp ?? 0)}`));
+    tile.append(big, el("div", { class: "state" }, `entregados a las ${fmtTime.format(last.t)}`));
+    tiles.append(tile);
+  }
+
+  // legend + availability chart
+  const legend = document.getElementById("legend"); legend.replaceChildren();
+  for (const ruta of routes) {
+    const it = el("span"); const k = el("i"); k.style.background = routeColor(ruta);
+    it.append(k, document.createTextNode(ruta.replace(/^Ruta\s+/, ""))); legend.append(it);
+  }
+  lineChart(document.getElementById("chart-avail"), routes.map(ruta => ({
+    label: ruta.replace(/^Ruta\s+/, ""), color: routeColor(ruta),
+    points: byRoute.get(ruta).map(r => {
+      const pct = r.aforo ? Math.round(r.disp / r.aforo * 100) : 0;
+      return { t: r.t, y: pct, label: `${r.disp}/${r.aforo} · ${pct}%` };
+    }),
+  })), { yMax: 100, ySuffix: "%" });
+
+  const turnPts = [...groupBy(turnos, r => +r.t).values()].map(g => ({ t: g[0].t, y: g[0].turnosEnt }));
+  lineChart(document.getElementById("chart-turnos"), [{ label: "Turnos entregados", color: "var(--s1)", points: turnPts }],
+    { height: 180, yMax: turnos.length ? Math.max(...turnos.map(r => r.turnosEnt + (r.turnosDisp ?? 0))) : undefined });
+
+  // detail table
+  const table = document.getElementById("detail"); table.replaceChildren();
+  const thead = el("tr");
+  for (const [h, n] of [["Captura", 0], ["Ruta", 0], ["Aforo", 1], ["Vendidos", 1], ["Disponibles", 1]]) thead.append(el("th", n ? { class: "n" } : {}, h));
+  table.append(thead);
+  for (const r of day.slice().sort((a, b) => b.t - a.t || routeSort(a.ruta, b.ruta))) {
+    const tr = el("tr");
+    tr.append(el("td", {}, fmtDayTime.format(r.t)), el("td", {}, r.ruta),
+      el("td", { class: "n" }, String(r.aforo)), el("td", { class: "n" }, String(r.vendidos)), el("td", { class: "n" }, String(r.disp)));
+    table.append(tr);
+  }
+}
+
+function renderSummary(rows) {
+  const table = document.getElementById("summary"); table.replaceChildren();
+  const head = el("tr");
+  for (const [h, n] of [["Ruta", 0], ["Días observados", 1], ["Días agotada", 1], ["Hora mediana de agotamiento", 1], ["Hora más temprana", 1]])
+    head.append(el("th", n ? { class: "n" } : {}, h));
+  table.append(head);
+  const byRoute = groupBy(rows, r => r.ruta);
+  for (const ruta of [...byRoute.keys()].sort(routeSort)) {
+    const days = [...groupBy(byRoute.get(ruta), r => r.fecha).values()];
+    const outs = days.map(soldOutAt).filter(Boolean).map(limaMinutes).sort((a, b) => a - b);
+    const hhmm = v => `${String(Math.floor(v / 60)).padStart(2, "0")}:${String(v % 60).padStart(2, "0")}`;
+    const median = outs.length ? hhmm(Math.round(outs.length % 2 ? outs[(outs.length - 1) / 2] : (outs[outs.length / 2 - 1] + outs[outs.length / 2]) / 2)) : "—";
+    const tr = el("tr");
+    const name = el("td"); const k = el("span", { class: "key" });
+    k.style.cssText = `display:inline-block;width:10px;height:10px;border-radius:2px;margin-right:6px;background:${routeColor(ruta)}`;
+    name.append(k, document.createTextNode(ruta));
+    tr.append(name, el("td", { class: "n" }, String(days.length)), el("td", { class: "n" }, `${outs.length} (${Math.round(outs.length / days.length * 100)}%)`),
+      el("td", { class: "n" }, median), el("td", { class: "n" }, outs.length ? hhmm(outs[0]) : "—"));
+    table.append(tr);
+  }
+}
+
+async function main() {
+  let rows = [];
+  try {
+    const res = await fetch(DATA_URL, { cache: "no-store" });
+    if (res.ok) rows = load(parseCSV(await res.text()));
+  } catch (e) { /* handled below */ }
+  const content = document.getElementById("content");
+  if (!rows.length) {
+    content.replaceChildren(el("div", { class: "card empty" }, "Aún no hay capturas. La primera llegará en la próxima ejecución del workflow."));
+    return;
+  }
+  const latest = rows.reduce((a, b) => (b.t > a.t ? b : a));
+  document.getElementById("updated").textContent = `Última captura: ${fmtDayTime.format(latest.t)} · ${rows.length} filas`;
+
+  const dates = [...new Set(rows.map(r => r.fecha))].sort().reverse();
+  const sel = document.getElementById("day");
+  for (const d of dates) sel.append(el("option", { value: d }, fmtDate.format(new Date(d + "T00:00:00Z"))));
+  const saved = (() => { try { return localStorage.getItem("machutrack-day"); } catch { return null; } })();
+  sel.value = dates.includes(saved) ? saved : dates[0];
+  sel.addEventListener("change", () => {
+    try { localStorage.setItem("machutrack-day", sel.value); } catch {}
+    renderDay(rows, sel.value);
+  });
+  renderDay(rows, sel.value);
+  renderSummary(rows);
+  let lastW = window.innerWidth, timer;
+  window.addEventListener("resize", () => {
+    if (window.innerWidth === lastW) return;
+    lastW = window.innerWidth; clearTimeout(timer);
+    timer = setTimeout(() => renderDay(rows, sel.value), 150);
+  });
+}
+main();
+</script>
+</body>
+</html>
