@@ -1,0 +1,7 @@
+captured_utc,captured_lima,fecha_visita,inicio_venta,turnos_disponibles,turnos_entregados,ruta,aforo,vendidos,disponibles
+2026-09-24T08:12:19+00:00,2026-09-24T03:12:19-05:00,2026-09-25,06:00 AM,411,589,Ruta 1-A: Montaña Machupicchu,50,3,47
+2026-09-24T08:12:19+00:00,2026-09-24T03:12:19-05:00,2026-09-25,06:00 AM,411,589,Ruta 1-B: Terraza superior,100,0,100
+2026-09-24T08:12:19+00:00,2026-09-24T03:12:19-05:00,2026-09-25,06:00 AM,411,589,Ruta 2-A: Clásico Diseñada,600,447,153
+2026-09-24T08:12:19+00:00,2026-09-24T03:12:19-05:00,2026-09-25,06:00 AM,411,589,Ruta 2-B: Terraza Inferior,100,73,27
+2026-09-24T08:12:19+00:00,2026-09-24T03:12:19-05:00,2026-09-25,06:00 AM,411,589,Ruta 3-A: Montaña Waynapicchu,50,16,34
+2026-09-24T08:12:19+00:00,2026-09-24T03:12:19-05:00,2026-09-25,06:00 AM,411,589,Ruta 3-B: Realeza diseñada,100,39,61
