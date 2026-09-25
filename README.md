@@ -23,6 +23,46 @@ Esa página muestra, para el **día siguiente**:
 - `.github/workflows/track.yml` ejecuta todo en GitHub Actions (cada 15 min de 05:00 a 17:00 de Lima, cada 2 h el resto), hace
   commit de los datos y publica el dashboard en GitHub Pages.
 
+## Disparador externo (recomendado)
+
+El cron de GitHub no es fiable: retrasa o se salta ejecuciones, a veces durante horas
+(el 24/09/2026 no lanzó ninguna entre las 05:00 y las 09:50 de Lima). Para no perder la
+franja clave, un servicio externo lanza el workflow cada 15 min y el cron de GitHub
+queda como respaldo. El workflow no ejecuta dos capturas a la vez, así que no se
+duplican.
+
+### 1. Token de GitHub
+
+En <https://github.com/settings/personal-access-tokens/new> (fine-grained token):
+
+- **Repository access:** *Only select repositories* → `machutrack`.
+- **Permissions → Repository permissions → Actions:** *Read and write*. Nada más.
+- **Expiration:** que cubra hasta después del viaje.
+
+Copia el token (`github_pat_...`); solo se muestra una vez.
+
+### 2. Tarea en cron-job.org
+
+En <https://cron-job.org> (gratis) → *Create cronjob*:
+
+- **URL:** `https://api.github.com/repos/GmausDev/machutrack/actions/workflows/track.yml/dispatches`
+- **Schedule:** *Custom* → minutos `0,15,30,45`, horas `5-17`, todos los días.
+  Zona horaria del job: **America/Lima**.
+- **Advanced → Request method:** `POST`
+- **Advanced → Headers:**
+  - `Accept: application/vnd.github+json`
+  - `Authorization: Bearer github_pat_...` (tu token)
+  - `X-GitHub-Api-Version: 2022-11-28`
+  - `Content-Type: application/json`
+- **Advanced → Request body:** `{"ref":"main"}`
+- **Notifications:** activa el aviso por email si falla.
+
+Pulsa *Test run*: la respuesta correcta es **204 No Content** y en la pestaña Actions
+aparece una ejecución `workflow_dispatch`. Un 401 es un token mal copiado, un 403 o 404
+es que le falta el permiso *Actions: Read and write* o el acceso a `machutrack`.
+
+Opcional: crea una segunda tarea igual con horas `19,21,23,1,3` y minuto `0` para las
+capturas nocturnas.
 
 ## Uso local
 
