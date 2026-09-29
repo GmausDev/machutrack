@@ -8,7 +8,7 @@ Horas en hora de Lima. «Agotado a las» = primera captura en la que la ruta lle
 |---|---|---|---|
 | Ruta 1-A: Montaña Machupicchu | 6 | 4 | 15:16 |
 | Ruta 1-B: Terraza superior | 6 | 4 | 16:00 |
-| Ruta 2-A: Clásico Diseñada | 6 | 5 | 11:45 |
+| Ruta 2-A: Clásico Diseñada | 6 | 6 | 12:08 |
 | Ruta 2-B: Terraza Inferior | 6 | 6 | 12:15 |
 | Ruta 3-A: Montaña Waynapicchu | 6 | 5 | 14:31 |
 | Ruta 3-B: Realeza diseñada | 6 | 4 | 12:11 |
@@ -19,12 +19,12 @@ Horas en hora de Lima. «Agotado a las» = primera captura en la que la ruta lle
 
 | Ruta | Aforo | Disponibles (última) | Última captura | Agotado a las |
 |---|---|---|---|---|
-| Ruta 1-A: Montaña Machupicchu | 50 | 39 | 29/09 16:01 | — |
-| Ruta 1-B: Terraza superior | 100 | 61 | 29/09 16:01 | — |
-| Ruta 2-A: Clásico Diseñada | 600 | 4 | 29/09 16:01 | — |
-| Ruta 2-B: Terraza Inferior | 100 | 0 | 29/09 16:01 | 29/09 15:16 |
-| Ruta 3-A: Montaña Waynapicchu | 50 | 36 | 29/09 16:01 | — |
-| Ruta 3-B: Realeza diseñada | 100 | 53 | 29/09 16:01 | — |
+| Ruta 1-A: Montaña Machupicchu | 50 | 39 | 29/09 16:16 | — |
+| Ruta 1-B: Terraza superior | 100 | 61 | 29/09 16:16 | — |
+| Ruta 2-A: Clásico Diseñada | 600 | 0 | 29/09 16:16 | 29/09 16:16 |
+| Ruta 2-B: Terraza Inferior | 100 | 0 | 29/09 16:16 | 29/09 15:16 |
+| Ruta 3-A: Montaña Waynapicchu | 50 | 36 | 29/09 16:16 | — |
+| Ruta 3-B: Realeza diseñada | 100 | 51 | 29/09 16:16 | — |
 
 ### 2026-09-29
 
