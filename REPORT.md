@@ -6,14 +6,25 @@ Horas en hora de Lima. «Agotado a las» = primera captura en la que la ruta lle
 
 | Ruta | Días observados | Días agotada | Hora mediana de agotamiento |
 |---|---|---|---|
-| Ruta 1-A: Montaña Machupicchu | 28 | 19 | 16:16 |
-| Ruta 1-B: Terraza superior | 28 | 19 | 16:16 |
-| Ruta 2-A: Clásico Diseñada | 28 | 22 | 15:01 |
-| Ruta 2-B: Terraza Inferior | 28 | 22 | 15:16 |
-| Ruta 3-A: Montaña Waynapicchu | 28 | 21 | 15:16 |
-| Ruta 3-B: Realeza diseñada | 28 | 19 | 14:31 |
+| Ruta 1-A: Montaña Machupicchu | 29 | 19 | 16:16 |
+| Ruta 1-B: Terraza superior | 29 | 19 | 16:16 |
+| Ruta 2-A: Clásico Diseñada | 29 | 23 | 15:16 |
+| Ruta 2-B: Terraza Inferior | 29 | 23 | 15:16 |
+| Ruta 3-A: Montaña Waynapicchu | 29 | 22 | 15:38 |
+| Ruta 3-B: Realeza diseñada | 29 | 19 | 14:31 |
 
 ## Detalle por día de visita
+
+### 2026-10-23
+
+| Ruta | Aforo | Disponibles (última) | Última captura | Agotado a las |
+|---|---|---|---|---|
+| Ruta 1-A: Montaña Machupicchu | 50 | 38 | 21/10 19:26 | — |
+| Ruta 1-B: Terraza superior | 100 | 18 | 21/10 19:26 | — |
+| Ruta 2-A: Clásico Diseñada | 600 | 0 | 21/10 19:26 | 21/10 19:26 |
+| Ruta 2-B: Terraza Inferior | 100 | 0 | 21/10 19:26 | 21/10 19:26 |
+| Ruta 3-A: Montaña Waynapicchu | 50 | 0 | 21/10 19:26 | 21/10 19:26 |
+| Ruta 3-B: Realeza diseñada | 100 | 3 | 21/10 19:26 | — |
 
 ### 2026-10-22
 
