@@ -19,12 +19,12 @@ Horas en hora de Lima. «Agotado a las» = primera captura en la que la ruta lle
 
 | Ruta | Aforo | Disponibles (última) | Última captura | Agotado a las |
 |---|---|---|---|---|
-| Ruta 1-A: Montaña Machupicchu | 50 | 47 | 27/10 14:09 | — |
-| Ruta 1-B: Terraza superior | 100 | 98 | 27/10 14:09 | — |
-| Ruta 2-A: Clásico Diseñada | 600 | 31 | 27/10 14:09 | — |
-| Ruta 2-B: Terraza Inferior | 100 | 32 | 27/10 14:09 | — |
-| Ruta 3-A: Montaña Waynapicchu | 50 | 36 | 27/10 14:09 | — |
-| Ruta 3-B: Realeza diseñada | 100 | 92 | 27/10 14:09 | — |
+| Ruta 1-A: Montaña Machupicchu | 50 | 47 | 27/10 14:16 | — |
+| Ruta 1-B: Terraza superior | 100 | 98 | 27/10 14:16 | — |
+| Ruta 2-A: Clásico Diseñada | 600 | 29 | 27/10 14:16 | — |
+| Ruta 2-B: Terraza Inferior | 100 | 32 | 27/10 14:16 | — |
+| Ruta 3-A: Montaña Waynapicchu | 50 | 35 | 27/10 14:16 | — |
+| Ruta 3-B: Realeza diseñada | 100 | 92 | 27/10 14:16 | — |
 
 ### 2026-10-27
 
